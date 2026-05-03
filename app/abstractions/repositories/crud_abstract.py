@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
+from uuid import UUID
 
 T = TypeVar("T")
 F = TypeVar("F")
 S = TypeVar("S")
+P = TypeVar("P")
 
 
-class ReadableRepository(ABC, Generic[T, F]):
+class ReadableRepository(ABC, Generic[T, S]):
     @abstractmethod
     def get_by_id(self, obj_id: int) -> T | None:
         pass
@@ -18,9 +20,17 @@ class ReadableRepository(ABC, Generic[T, F]):
         pass
 
 
-class WritableRepository(ABC, Generic[T]):
+class WritableRepository(ABC, Generic[T, P]):
     @abstractmethod
     def create(self, obj: T) -> T:
+        pass
+
+    @abstractmethod
+    def update_put(self, id: UUID, obj: T) -> T:
+        pass
+
+    @abstractmethod
+    def update_patch(self, id: UUID, obj: P) -> T:
         pass
 
     @abstractmethod
@@ -42,10 +52,10 @@ class FilterableRepository(ABC, Generic[T, F]):
 
 # Interfaz combinada para casos que necesiten todas las operaciones CRUD
 class CRUDRepository(
-    ReadableRepository[T, F],
-    WritableRepository[T],
+    ReadableRepository[T, S],
+    WritableRepository[T, P],
     FilterableRepository[T, F],
     ABC,
-    Generic[T, F],
+    Generic[T, F, S, P],
 ):
     pass

@@ -7,15 +7,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def get_env_file() -> str:
-    """Get the appropriate .env file based on the ENV environment variable."""
-    env = os.getenv("ENV", "development").lower()
-    env_file = f".env.{env}"
-
-    # Si el archivo específico no existe, usar .env por defecto
-    if not os.path.exists(env_file):
-        return ".env"
-
-    return env_file
+    env = os.getenv("ENV")
+    if env:
+        return f".env.{env}"
+    return ".env"
 
 
 class Settings(BaseSettings):
