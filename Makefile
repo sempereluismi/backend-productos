@@ -1,5 +1,5 @@
 run-dev:
-	uv run python -m fastapi dev app/main.py
+	cd backend && uv run python -m fastapi dev app/main.py
 
 docker-build:
 	docker compose build
@@ -22,14 +22,17 @@ docker-db-shell:
 # Generar una migración con un mensaje personalizado
 migrate:
 	@read -p "Enter migration message: " msg; \
-	uv run alembic revision --autogenerate -m "$$msg"
+	cd backend && uv run alembic revision --autogenerate -m "$$msg"
 
 # Ejecutar las migraciones pendientes
 upgrade:
-	uv run alembic upgrade head
+	cd backend && uv run alembic upgrade head
+
+frontend:
+	cd frontend && python3 -m http.server 3000
 
 serve-docs:
-	uv run mkdocs serve -a 127.0.0.1:4321
+	cd backend && uv run mkdocs serve -a 127.0.0.1:4321
 
 deploy-docs:
-	uv run mkdocs gh-deploy --force -m "Deploy docs: $$(date '+%Y-%m-%d %H:%M:%S')"
+	cd backend && uv run mkdocs gh-deploy --force -m "Deploy docs: $$(date '+%Y-%m-%d %H:%M:%S')"

@@ -16,16 +16,16 @@ services:
       retries: 3
 
   app:
-    build: .
+    build: ./backend
     ports:
       - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
     volumes:
-      - ./app:/app/app
+      - ./backend/app:/app/app
     env_file:
-      - .env.development
+      - ./backend/.env.development
     environment:
       - ENV=development
     command: uv run python -m fastapi dev app/main.py --host 0.0.0.0 --port 8000
