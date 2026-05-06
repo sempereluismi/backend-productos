@@ -1,20 +1,13 @@
-# Use the official Nginx image as the base image
-FROM nginx:latest
+# Stage 1: Build React app
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-# Set the working directory
-WORKDIR /usr/share/nginx/html
-
-# Copy the index.html file to the Nginx HTML directory
-COPY ./index.html .
-
-# Copy the JavaScript file to the js directory
-COPY ./js/app.js ./js/
-
-# Copy the CSS file to the css directory
-COPY ./css/styles.css ./css/
-
-# Expose port 80
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
-
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
